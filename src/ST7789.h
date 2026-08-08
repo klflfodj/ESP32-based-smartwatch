@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include <SPI.h>
 
+/*SPI 时钟频率 */
+#define LCD_SPI_SPEED   26000000
+
 /* 屏幕分辨率 */
 #define LCD_WIDTH       240
 #define LCD_HEIGHT      280

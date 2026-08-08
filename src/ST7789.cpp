@@ -37,7 +37,7 @@ void ST7789_WriteCommand(uint8_t cmd)
     //DC = HIGH → 数据
     digitalWrite(LCD_DC, LOW);
 
-    LCD_SPI.beginTransaction(SPISettings(9000000, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_SPEED, MSBFIRST, SPI_MODE0));
 
     digitalWrite(LCD_CS, LOW);
 
@@ -63,7 +63,7 @@ void ST7789_WriteData(uint8_t data)
     //DC = HIGH → 数据
     digitalWrite(LCD_DC, HIGH);
 
-    LCD_SPI.beginTransaction(SPISettings(9000000, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_SPEED, MSBFIRST, SPI_MODE0));
 
     digitalWrite(LCD_CS, LOW);
 
@@ -181,7 +181,7 @@ void ST7789_WriteDataBuffer(const uint8_t *data, uint32_t len)
     digitalWrite(LCD_DC, HIGH);
     digitalWrite(LCD_CS, LOW);
 
-    LCD_SPI.beginTransaction(SPISettings(9000000, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_SPEED, MSBFIRST, SPI_MODE0));
 
     LCD_SPI.writeBytes(data, len);
 
@@ -225,7 +225,7 @@ void ST7789_FillScreen(uint16_t color)
     digitalWrite(LCD_DC, HIGH);
     digitalWrite(LCD_CS, LOW);
 
-    LCD_SPI.beginTransaction(SPISettings(9000000, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_SPEED, MSBFIRST, SPI_MODE0));
 
     for(uint32_t i = 0; i < LCD_WIDTH * LCD_HEIGHT; i++)
     {
