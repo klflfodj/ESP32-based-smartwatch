@@ -47,14 +47,18 @@ void ST7789_WriteDataBuffer(const uint8_t *data, uint32_t len);
 
 // 设置地址范围
 void ST7789_SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
-// 绘制像素点
-void ST7789_DrawPixel(uint16_t x, uint16_t y, uint16_t color);
 
 // 填充屏幕
 void ST7789_FillScreen(uint16_t color);
-// 填充矩形
-void ST7789_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
 
+/************** 绘制函数 **************/
+
+// 绘制实心矩形
+void ST7789_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
+// 绘制像素点
+void ST7789_DrawPixel(uint16_t x, uint16_t y, uint16_t color);
+// 绘制线
+void ST7789_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 
 
 #endif

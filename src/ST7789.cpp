@@ -204,7 +204,7 @@ void ST7789_WriteDataBuffer(const uint8_t *data, uint32_t len)
 /************************ 主要绘图函数 *************************/
 
 // -----------------------
-// 绘制一个像素
+// 绘制一个像素点
 // -----------------------
 // 功能介绍：
 // 在指定坐标绘制一个 RGB565 像素
@@ -250,6 +250,18 @@ void ST7789_FillScreen(uint16_t color)
     digitalWrite(LCD_CS, HIGH);
 }
 
+// -----------------------
+// 绘制实心矩形
+// -----------------------
+// 功能介绍：
+// 绘制一个实心矩形
+//
+// x → 矩形左上角 X 坐标
+// y     → 矩形左上角 Y 坐标
+// w     → 矩形宽度
+// h     → 矩形高度
+// color → RGB565颜色
+// -----------------------
 void ST7789_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
 {
     // 计算需要发送的像素数量
@@ -294,6 +306,64 @@ void ST7789_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t co
 
     }
 
+}
+
+// -----------------------
+// 绘制线
+// -----------------------
+// 功能介绍：
+// 绘制一条线
+//
+// x0 → 起始点 X 坐标
+// y0 → 起始点 Y 坐标
+// x1 → 终点 X 坐标
+// y1 → 终点 Y 坐标
+// color → RGB565颜色
+// -----------------------
+void ST7789_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+{
+    // 计算线的长度
+    int dx = abs(x1 - x0);
+    int dy = abs(y1 - y0);
+
+    // 计算线的增量
+    // 判断线的方向
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+
+    // 计算错误项
+    int err = dx - dy;
+
+    while(1)
+    {
+        ST7789_DrawPixel(x0, y0, color);
+
+        // 判断是否到达终点
+        if(x0 == x1 && y0 == y1)
+        {
+            break;
+        }
+
+        // 扩大当前误差
+        int e2 = 2 * err;
+
+        // x方向是否前进
+        if(e2 >= -dy)
+        {
+            err += dy;
+            x0 += sx;
+        }
+
+        // y方向是否前进
+        if(e2 <= dx)
+        {
+            err += dx;
+            y0 += sy;
+        }
+
+    }
 
 }
+
+
 
