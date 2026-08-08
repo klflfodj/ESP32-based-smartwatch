@@ -121,48 +121,6 @@ void ST7789_Init(void)
     ST7789_WriteData(0xC0);
     delay(10);
 
-    // -----------------------
-    // 设置色调
-    // -----------------------
-    // Gamma 正
-    // -----------------------
-    ST7789_WriteCommand(0xE0);
-
-    ST7789_WriteData(0xD0);
-    ST7789_WriteData(0x00);
-    ST7789_WriteData(0x05);
-    ST7789_WriteData(0x0E);
-    ST7789_WriteData(0x15);
-    ST7789_WriteData(0x0D);
-    ST7789_WriteData(0x37);
-    ST7789_WriteData(0x43);
-    ST7789_WriteData(0x47);
-    ST7789_WriteData(0x09);
-    ST7789_WriteData(0x15);
-    ST7789_WriteData(0x12);
-    ST7789_WriteData(0x16);
-    ST7789_WriteData(0x19);
-
-    // Gamma 负
-    ST7789_WriteCommand(0xE1);
-
-    ST7789_WriteData(0xD0);
-    ST7789_WriteData(0x00);
-    ST7789_WriteData(0x05);
-    ST7789_WriteData(0x0D);
-    ST7789_WriteData(0x0C);
-    ST7789_WriteData(0x06);
-    ST7789_WriteData(0x2D);
-    ST7789_WriteData(0x44);
-    ST7789_WriteData(0x40);
-    ST7789_WriteData(0x0E);
-    ST7789_WriteData(0x1C);
-    ST7789_WriteData(0x18);
-    ST7789_WriteData(0x16);
-    ST7789_WriteData(0x19);
-
-    // -----------------------
-
     // 显示反转
     ST7789_WriteCommand(0x21);
     delay(10);
@@ -252,21 +210,22 @@ void ST7789_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
     ST7789_WriteData(color & 0xFF);
 }
 
+// -----------------------
+// 填充屏幕
+// -----------------------
+// 功能介绍：
+// 填充屏幕为指定颜色
+//
+// color → RGB565颜色
+// -----------------------
 void ST7789_FillScreen(uint16_t color)
 {
-    ST7789_SetAddressWindow(
-        0,
-        0,
-        LCD_WIDTH - 1,
-        LCD_HEIGHT - 1
-    );
+    ST7789_SetAddressWindow(0,0,LCD_WIDTH - 1,LCD_HEIGHT - 1);
 
     digitalWrite(LCD_DC, HIGH);
     digitalWrite(LCD_CS, LOW);
 
-    LCD_SPI.beginTransaction(
-        SPISettings(9000000, MSBFIRST, SPI_MODE0)
-    );
+    LCD_SPI.beginTransaction(SPISettings(9000000, MSBFIRST, SPI_MODE0));
 
     for(uint32_t i = 0; i < LCD_WIDTH * LCD_HEIGHT; i++)
     {

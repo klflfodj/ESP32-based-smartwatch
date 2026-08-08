@@ -9,7 +9,9 @@ void setup()
 
   Serial.println("ST7789 Init OK");
 
-  ST7789_FillScreen(LCD_RED);
+  ST7789_FillScreen(LCD_WHITE);
+
+  ST7789_DrawPixel(120, 140, LCD_RED);
 
   Serial.println("RED TEST OK");
 }
