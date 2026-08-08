@@ -176,6 +176,16 @@ void ST7789_SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 
 }
 
+// -----------------------
+// 发送数据缓冲区
+// -----------------------
+// 功能介绍：
+// 发送 ST7789 数据缓冲区
+// -----------------------
+// 参数：
+// data - 数据指针
+// len  - 数据长度
+// -----------------------
 void ST7789_WriteDataBuffer(const uint8_t *data, uint32_t len)
 {
     digitalWrite(LCD_DC, HIGH);
@@ -190,6 +200,8 @@ void ST7789_WriteDataBuffer(const uint8_t *data, uint32_t len)
     digitalWrite(LCD_CS, HIGH);
 
 }
+
+/************************ 主要绘图函数 *************************/
 
 // -----------------------
 // 绘制一个像素
@@ -238,4 +250,50 @@ void ST7789_FillScreen(uint16_t color)
     digitalWrite(LCD_CS, HIGH);
 }
 
+void ST7789_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
+{
+    // 计算需要发送的像素数量
+    uint32_t totalPixels = (uint32_t)w * h;
+
+    // 设置显示区域
+    ST7789_SetAddressWindow(x, y, x + w - 1, y + h - 1);
+
+    // 创建 512 像素的缓冲区
+    uint8_t buffer[LCD_BUFFER_PIXELS * 2];
+
+    // ------------------------------------------------
+    // 先把 512 个像素全部填成指定颜色
+    // ------------------------------------------------
+    for(uint32_t i = 0; i < LCD_BUFFER_PIXELS; i++)
+    {
+        buffer[i * 2] = color >> 8;
+        buffer[i * 2 + 1] = color & 0xFF;
+    }
+
+    // ------------------------------------------------
+    // 分批发送
+    // ------------------------------------------------
+    while(totalPixels > 0)
+    {
+        uint32_t pixelsTosend;
+
+        if(totalPixels >= LCD_BUFFER_PIXELS)// 如果剩余像素数量大于缓冲区像素上限
+        {
+            pixelsTosend = LCD_BUFFER_PIXELS;// 每次发送 512 个像素
+        }
+        else
+        {
+            pixelsTosend = totalPixels;// 最后一次发送剩余像素
+        }
+
+        // 发送这一批像素
+        ST7789_WriteDataBuffer(buffer, pixelsTosend * 2);
+
+        // 更新剩余像素数量
+        totalPixels -= pixelsTosend;// 减去已发送像素数量
+
+    }
+
+
+}
 

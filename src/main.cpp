@@ -11,7 +11,7 @@ void setup()
 
   ST7789_FillScreen(LCD_WHITE);
 
-  ST7789_DrawPixel(120, 140, LCD_RED);
+  ST7789_FillRect(50, 50, 100, 100, LCD_RED);
 
   Serial.println("RED TEST OK");
 }
