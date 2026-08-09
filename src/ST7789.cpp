@@ -1,7 +1,5 @@
 #include "ST7789.h"
 
-extern SPIClass LCD_SPI;
-
 SPI_Config_typedef LCD_SPI_Config = {LCD_CS, LCD_DC, LCD_RST, LCD_SCK, LCD_MOSI, LCD_SPI_SPEED};
 
 // -----------------------
