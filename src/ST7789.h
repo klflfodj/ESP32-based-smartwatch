@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "SPI_Driver.h"
 
+// SPI 配置
 extern SPI_Config_typedef LCD_SPI_Config;
 
 /*SPI 时钟频率 */
@@ -46,8 +47,5 @@ void ST7789_BeginWrite(void);
  void ST7789_WriteColor(uint16_t color);
 // 结束写入
 void ST7789_EndWrite(void);
-// 快速绘制像素点
-void ST7789_DrawPixelFast(uint16_t x, uint16_t y, uint16_t color);
-
 
 #endif

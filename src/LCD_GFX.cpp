@@ -150,7 +150,7 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
 
     while(1)
     {
-        ST7789_DrawPixelFast(x0, y0, color);
+        LCD_DrawPixel(x0, y0, color);
 
         // 判断是否到达终点
         if(x0 == x1 && y0 == y1)
@@ -206,4 +206,5 @@ void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color)
     }
     ST7789_EndWrite();
 }
+
 

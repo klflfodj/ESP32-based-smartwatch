@@ -6,7 +6,7 @@ SPIClass LCD_SPI(VSPI);// 初始化 SPI 通信
 // 初始化 SPI
 // -----------------------
 // 功能介绍：
-// 初始化 ST7789 SPI 通信
+// 初始化 SPI 通信
 // -----------------------
 void SPI_Init(SPI_Config_typedef *config)
 {
@@ -26,7 +26,7 @@ void SPI_Init(SPI_Config_typedef *config)
 // 发送命令
 // -----------------------
 // 功能介绍：
-// 发送 ST7789 命令
+// 发送 SPI 命令
 // -----------------------
 // 参数：
 // cmd - 命令字节
@@ -52,7 +52,7 @@ void SPI_WriteCommand(SPI_Config_typedef *config, uint8_t cmd)
 // 发送数据
 // -----------------------
 // 功能介绍：
-// 发送 ST7789 数据
+// 发送 SPI 数据·
 // -----------------------
 // 参数：
 // data - 数据字节
