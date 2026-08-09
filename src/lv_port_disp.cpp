@@ -14,6 +14,9 @@
 static lv_color_t draw_buf_1[LCD_WIDTH * 28];
 static lv_color_t draw_buf_2[LCD_WIDTH * 28];
 
+static lv_disp_draw_buf_t draw_buf;
+static lv_disp_drv_t disp_drv;
+
 // -----------------------
 // 功能介绍：
 // 刷新 LVGL 绘制的矩形区域到屏幕
@@ -47,11 +50,6 @@ void my_disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *c
     // 通知 LVGL 这一块已经刷新完成
     lv_disp_flush_ready(disp_drv);
 }
-
-
-static lv_disp_draw_buf_t draw_buf;
-static lv_disp_drv_t disp_drv;
-
 
 // -----------------------
 // 功能介绍：
