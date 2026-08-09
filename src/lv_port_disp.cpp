@@ -1,5 +1,4 @@
-#include "lvgl.h"
-#include "ST7789.h"
+#include "lv_port_disp.h"
 
 // -----------------------
 // 功能介绍：
@@ -16,6 +15,8 @@ static lv_color_t draw_buf_2[LCD_WIDTH * 28];
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_disp_drv_t disp_drv;
+
+static lv_indev_drv_t indev_drv;
 
 // -----------------------
 // 功能介绍：
@@ -73,5 +74,44 @@ void lvgl_init()
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register(&disp_drv);
 
+}
+
+void lv_indev_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
+{
+    uint16_t x = 0;
+    uint16_t y = 0;
+    // 读取触摸屏坐标
+    bool pressed = Touch_GetXY(&x, &y);
+
+    if (pressed)
+    {
+        // 触摸 Y 轴和屏幕方向相反，翻转 Y 坐标
+        y = LCD_HEIGHT - 1 - y;
+
+        // 触摸屏有触摸点
+        data->point.x = x;
+        data->point.y = y;
+        data->state = LV_INDEV_STATE_PRESSED;
+    }
+    else
+    {
+        // 触摸屏没有触摸点
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
+
+}
+
+// -----------------------
+// 功能介绍：
+// 初始化 LV屏输入驱动
+// -----------------------
+// indev_drv → LVGL 输入设备对象
+// -----------------------
+void lv_touch_init(void)
+{
+    lv_indev_drv_init(&indev_drv);// 初始化输入设备驱动
+    indev_drv.type = LV_INDEV_TYPE_POINTER;// 触摸类型
+    indev_drv.read_cb = lv_indev_read;// 读取回调函数
+    lv_indev_drv_register(&indev_drv);// 注册输入设备驱动
 }
 
