@@ -224,6 +224,17 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
 
 }
 
+// -----------------------
+// 绘制水平线
+// -----------------------
+// 功能介绍：
+// 绘制一条水平线
+//
+// x → 起始点 X 坐标
+// y → 起始点 Y 坐标
+// w → 线的宽度
+// color → RGB565颜色
+// -----------------------
 void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)
 {
     // 完全在屏幕外就直接返回
@@ -256,6 +267,17 @@ void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)
     
 }
 
+// -----------------------
+// 绘制垂直线
+// -----------------------
+// 功能介绍：
+// 绘制一条垂直线
+//
+// x → 起始点 X 坐标
+// y → 起始点 Y 坐标
+// h → 线的高度
+// color → RGB565颜色
+// -----------------------
 void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color)
 {
 
