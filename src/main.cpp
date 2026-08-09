@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include "ST7789.h"
+#include "LCD_GFX.h"
+
 
 void setup() 
 {
@@ -9,9 +11,9 @@ void setup()
 
   Serial.println("ST7789 Init OK");
 
-  ST7789_FillScreen(LCD_WHITE);
+  LCD_FillScreen(LCD_WHITE);
 
-  ST7789_FillRect(50, 50, 100, 100, LCD_RED);
+  LCD_FillRect(50, 50, 100, 100, LCD_RED);
 
   Serial.println("RED TEST OK");
 }
