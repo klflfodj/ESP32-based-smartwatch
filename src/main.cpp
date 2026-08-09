@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include "ST7789.h"
 #include "LCD_GFX.h"
 
 

@@ -14,9 +14,9 @@ void LCD_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
     ST7789_SetAddressWindow(x, y, x, y);
 
-    SPI_WriteData(&LCD_SPI_Config, color >> 8);
-
-    SPI_WriteData(&LCD_SPI_Config, color & 0xFF);
+    ST7789_BeginWrite();
+    ST7789_WriteColor(color);
+    ST7789_EndWrite();
 }
 
 // -----------------------
@@ -29,22 +29,7 @@ void LCD_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
 // -----------------------
 void LCD_FillScreen(uint16_t color)
 {
-    ST7789_SetAddressWindow(0,0,LCD_WIDTH - 1,LCD_HEIGHT - 1);
-
-    digitalWrite(LCD_DC, HIGH);
-    digitalWrite(LCD_CS, LOW);
-
-    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_SPEED, MSBFIRST, SPI_MODE0));
-
-    for(uint32_t i = 0; i < LCD_WIDTH * LCD_HEIGHT; i++)
-    {
-        LCD_SPI.transfer(color >> 8);
-        LCD_SPI.transfer(color & 0xFF);
-    }
-
-    LCD_SPI.endTransaction();
-
-    digitalWrite(LCD_CS, HIGH);
+    LCD_FillRect(0, 0, LCD_WIDTH, LCD_HEIGHT, color);
 }
 
 // -----------------------
@@ -146,8 +131,6 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
     // 计算错误项
     int err = dx - dy;
 
-    ST7789_BeginWrite();
-
     while(1)
     {
         LCD_DrawPixel(x0, y0, color);
@@ -176,7 +159,6 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
         }
 
     }
-    ST7789_EndWrite();
 
 }
 

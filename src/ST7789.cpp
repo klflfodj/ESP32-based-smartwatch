@@ -12,13 +12,13 @@ SPI_Config_typedef LCD_SPI_Config = {LCD_CS, LCD_DC, LCD_RST, LCD_SCK, LCD_MOSI,
 // -----------------------
 static void ST7789_Reset(void)
 {
-    digitalWrite(LCD_RST, HIGH);
+    digitalWrite(LCD_SPI_Config.DC_Pin, HIGH);
     delay(10);
 
-    digitalWrite(LCD_RST, LOW);
+    digitalWrite(LCD_SPI_Config.RST_Pin, LOW);
     delay(20);
 
-    digitalWrite(LCD_RST, HIGH);
+    digitalWrite(LCD_SPI_Config.RST_Pin, HIGH);
     delay(120);
 }
 
@@ -114,9 +114,9 @@ void ST7789_SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 // -----------------------
 void ST7789_BeginWrite(void)
 {
-    digitalWrite(LCD_DC, HIGH);
+    digitalWrite(LCD_SPI_Config.DC_Pin, HIGH);
 
-    digitalWrite(LCD_CS, LOW);
+    digitalWrite(LCD_SPI_Config.CS_Pin, LOW);
 
     LCD_SPI.beginTransaction(SPISettings(LCD_SPI_Config.SPI_Speed, MSBFIRST, SPI_MODE0));
 
