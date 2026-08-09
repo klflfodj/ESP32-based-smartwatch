@@ -8,17 +8,17 @@ SPIClass LCD_SPI(VSPI);// 初始化 SPI 通信
 // 功能介绍：
 // 初始化 ST7789 SPI 通信
 // -----------------------
-void SPI_Init(uint8_t CS_Pin, uint8_t DC_Pin, uint8_t RST_Pin, uint8_t SCK_Pin, uint8_t MOSI_Pin)
+void SPI_Init(SPI_Config_typedef *config)
 {
-    pinMode(CS_Pin, OUTPUT);
-    pinMode(DC_Pin, OUTPUT);
-    pinMode(RST_Pin, OUTPUT);
+    pinMode(config->CS_Pin, OUTPUT);
+    pinMode(config->DC_Pin, OUTPUT);
+    pinMode(config->RST_Pin, OUTPUT);
 
-    digitalWrite(CS_Pin, HIGH);
-    digitalWrite(DC_Pin, HIGH);
-    digitalWrite(RST_Pin, HIGH);
+    digitalWrite(config->CS_Pin, HIGH);
+    digitalWrite(config->DC_Pin, HIGH);
+    digitalWrite(config->RST_Pin, HIGH);
 
-    LCD_SPI.begin(SCK_Pin, -1, MOSI_Pin, CS_Pin);
+    LCD_SPI.begin(config->SCK_Pin, -1, config->MOSI_Pin, config->CS_Pin);
 
 }
 
@@ -31,20 +31,19 @@ void SPI_Init(uint8_t CS_Pin, uint8_t DC_Pin, uint8_t RST_Pin, uint8_t SCK_Pin, 
 // 参数：
 // cmd - 命令字节
 // -----------------------
-void SPI_WriteCommand(uint8_t DC_Pin, uint8_t CS_Pin, uint32_t SPI_Speed
-                        , uint8_t cmd)
+void SPI_WriteCommand(SPI_Config_typedef *config, uint8_t cmd)
 {
     //DC = LOW  → 命令
     //DC = HIGH → 数据
-    digitalWrite(DC_Pin, LOW);
+    digitalWrite(config->DC_Pin, LOW);
 
-    LCD_SPI.beginTransaction(SPISettings(SPI_Speed, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(config->SPI_Speed, MSBFIRST, SPI_MODE0));
 
-    digitalWrite(CS_Pin, LOW);
+    digitalWrite(config->CS_Pin, LOW);
 
     LCD_SPI.transfer(cmd);
 
-    digitalWrite(CS_Pin, HIGH);
+    digitalWrite(config->CS_Pin, HIGH);
 
     LCD_SPI.endTransaction();
 }
@@ -58,20 +57,19 @@ void SPI_WriteCommand(uint8_t DC_Pin, uint8_t CS_Pin, uint32_t SPI_Speed
 // 参数：
 // data - 数据字节
 // -----------------------
-void SPI_WriteData(uint8_t DC_Pin, uint8_t CS_Pin, uint32_t SPI_Speed
-                    , uint8_t data)
+void SPI_WriteData(SPI_Config_typedef *config, uint8_t data)
 {
     //DC = LOW  → 命令
     //DC = HIGH → 数据
-    digitalWrite(DC_Pin, HIGH);
+    digitalWrite(config->DC_Pin, HIGH);
 
-    LCD_SPI.beginTransaction(SPISettings(SPI_Speed, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(config->SPI_Speed, MSBFIRST, SPI_MODE0));
 
-    digitalWrite(CS_Pin, LOW);
+    digitalWrite(config->CS_Pin, LOW);
 
     LCD_SPI.transfer(data);
 
-    digitalWrite(CS_Pin, HIGH);
+    digitalWrite(config->CS_Pin, HIGH);
 
     LCD_SPI.endTransaction();
 }
@@ -86,18 +84,17 @@ void SPI_WriteData(uint8_t DC_Pin, uint8_t CS_Pin, uint32_t SPI_Speed
 // data - 数据指针
 // len  - 数据长度
 // -----------------------
-void SPI_WriteDataBuffer(uint8_t DC_Pin, uint8_t CS_Pin, uint32_t SPI_Speed
-                            , const uint8_t *data, uint32_t len)
+void SPI_WriteDataBuffer(SPI_Config_typedef *config, const uint8_t *data, uint32_t len)
 {
-    digitalWrite(DC_Pin, HIGH);
-    digitalWrite(CS_Pin, LOW);
+    digitalWrite(config->DC_Pin, HIGH);
+    digitalWrite(config->CS_Pin, LOW);
 
-    LCD_SPI.beginTransaction(SPISettings(SPI_Speed, MSBFIRST, SPI_MODE0));
+    LCD_SPI.beginTransaction(SPISettings(config->SPI_Speed, MSBFIRST, SPI_MODE0));
 
     LCD_SPI.writeBytes(data, len);
 
     LCD_SPI.endTransaction();
 
-    digitalWrite(CS_Pin, HIGH);
+    digitalWrite(config->CS_Pin, HIGH);
 
 }

@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include "SPI_Driver.h"
 
+extern SPI_Config_typedef LCD_SPI_Config;
+
 /*SPI 时钟频率 */
 #define LCD_SPI_SPEED     24000000 // 26MHz极限频率
 

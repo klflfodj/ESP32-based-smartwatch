@@ -14,9 +14,9 @@ void LCD_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
 {
     ST7789_SetAddressWindow(x, y, x, y);
 
-    SPI_WriteData(LCD_DC, LCD_CS, LCD_SPI_SPEED, color >> 8);
+    SPI_WriteData(&LCD_SPI_Config, color >> 8);
 
-    SPI_WriteData(LCD_DC, LCD_CS, LCD_SPI_SPEED, color & 0xFF);
+    SPI_WriteData(&LCD_SPI_Config, color & 0xFF);
 }
 
 // -----------------------
@@ -96,7 +96,7 @@ void LCD_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color
         }
 
         // 发送这一批像素
-        SPI_WriteDataBuffer(LCD_DC, LCD_CS, LCD_SPI_SPEED, buffer, pixelsTosend * 2);
+        SPI_WriteDataBuffer(&LCD_SPI_Config, buffer, pixelsTosend * 2);
 
         // 更新剩余像素数量
         totalPixels -= pixelsTosend;// 减去已发送像素数量
