@@ -46,6 +46,26 @@ void LCD_FillScreen(uint16_t color)
 // -----------------------
 void LCD_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color)
 {
+
+    // 完全在屏幕外就直接返回
+    if (x >= LCD_WIDTH || y >= LCD_HEIGHT)
+    {
+        return;
+    }
+
+    // 超出右边就把宽度截短
+    if (x + w > LCD_WIDTH)
+    {
+        w = LCD_WIDTH - x;
+    }
+
+    // 超出下边就把高度截短
+    if (y + h > LCD_HEIGHT)
+    {
+        h = LCD_HEIGHT - y;
+    }
+
+
     // 计算需要发送的像素数量
     uint32_t totalPixels = (uint32_t)w * h;
 
@@ -104,22 +124,64 @@ void LCD_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color
 // -----------------------
 void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
 {
+    // 完全在屏幕外就直接返回
+    if (x0 >= LCD_WIDTH || y0 >= LCD_HEIGHT || x1 >= LCD_WIDTH || y1 >= LCD_HEIGHT)
+    {
+        return;
+    }
+
+    // 超出右边就把宽度截短
+    if (x0 > LCD_WIDTH)
+    {
+        x0 = LCD_WIDTH;
+    }
+
+    if (x1 > LCD_WIDTH)
+    {
+        x1 = LCD_WIDTH;
+    }
+
+
+    // 超出下边就把高度截短
+    if (y0 > LCD_HEIGHT)
+    {
+        y0 = LCD_HEIGHT;
+    }
+
+    if (y1 > LCD_HEIGHT)
+    {
+        y1 = LCD_HEIGHT;
+    }
+
+
     // 计算线的长度
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
 
-    if(y0 == y1)
+    if (y0 == y1)
     {
-        LCD_DrawFastHLine(x0,y0,abs(x1-x0)+1,color);
-
+        // 终点在左边时交换，保证从左往右画
+        if (x0 > x1)
+        {
+            uint16_t t = x0;
+            x0 = x1;
+            x1 = t;
+        }
+    
+        LCD_DrawFastHLine(x0, y0, x1 - x0 + 1, color);
         return;
     }
 
-
-    if(x0 == x1)
+    if (x0 == x1)
     {
-        LCD_DrawFastVLine(x0,y0,abs(y1-y0)+1,color);
-
+        // 终点在上方时交换，保证从上往下画
+        if (y0 > y1)
+        {
+            uint16_t t = y0;
+            y0 = y1;
+            y1 = t;
+        }
+        LCD_DrawFastVLine(x0, y0, y1 - y0 + 1, color);
         return;
     }
 
@@ -164,6 +226,24 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
 
 void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)
 {
+    // 完全在屏幕外就直接返回
+    if (x >= LCD_WIDTH || y >= LCD_HEIGHT)
+    {
+        return;
+    }
+
+    // 超出右边就把宽度截短
+    if (x + w > LCD_WIDTH)
+    {
+        w = LCD_WIDTH - x;
+    }
+
+    // 超出下边就把高度截短
+    if (y > LCD_HEIGHT)
+    {
+        y = LCD_HEIGHT;
+    }
+
     ST7789_SetAddressWindow(x, y, x + w - 1, y);
 
     ST7789_BeginWrite();
@@ -178,6 +258,25 @@ void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)
 
 void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color)
 {
+
+    // 完全在屏幕外就直接返回
+    if (x >= LCD_WIDTH || y >= LCD_HEIGHT)
+    {
+        return;
+    }
+
+    // 超出右边就把宽度截短
+    if (x > LCD_WIDTH)
+    {
+        x = LCD_WIDTH;
+    }
+
+    // 超出下边就把高度截短
+    if (y + h > LCD_HEIGHT)
+    {
+        h = LCD_HEIGHT - y;
+    }
+
     ST7789_SetAddressWindow(x, y, x, y + h - 1);
 
     ST7789_BeginWrite();
@@ -188,5 +287,6 @@ void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color)
     }
     ST7789_EndWrite();
 }
+
 
 

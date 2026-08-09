@@ -10,15 +10,14 @@ SPI_Config_typedef LCD_SPI_Config = {LCD_CS, LCD_DC, LCD_RST, LCD_SCK, LCD_MOSI,
 // -----------------------
 static void ST7789_Reset(void)
 {
-    digitalWrite(LCD_SPI_Config.DC_Pin, HIGH);
+    digitalWrite(LCD_SPI_Config.RST_Pin, HIGH);
     delay(10);
-
     digitalWrite(LCD_SPI_Config.RST_Pin, LOW);
     delay(20);
-
     digitalWrite(LCD_SPI_Config.RST_Pin, HIGH);
     delay(120);
 }
+
 
 // -----------------------
 // 初始化 ST7789
@@ -142,6 +141,6 @@ void ST7789_EndWrite(void)
 {
     LCD_SPI.endTransaction();
 
-    digitalWrite(LCD_CS, HIGH);
+    digitalWrite(LCD_SPI_Config.CS_Pin, HIGH);
 }
 
