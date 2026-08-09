@@ -16,5 +16,10 @@ void LCD_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color
 void LCD_DrawPixel(uint16_t x, uint16_t y, uint16_t color);
 // 绘制线
 void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
+// 绘制水平线
+void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color);
+// 绘制垂直线
+void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color);
+
 
 #endif

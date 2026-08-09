@@ -123,6 +123,21 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
     int dx = abs(x1 - x0);
     int dy = abs(y1 - y0);
 
+    if(y0 == y1)
+    {
+        LCD_DrawFastHLine(x0,y0,abs(x1-x0)+1,color);
+
+        return;
+    }
+
+
+    if(x0 == x1)
+    {
+        LCD_DrawFastVLine(x0,y0,abs(y1-y0)+1,color);
+
+        return;
+    }
+
     // 计算线的增量
     // 判断线的方向
     int sx = (x0 < x1) ? 1 : -1;
@@ -131,9 +146,11 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
     // 计算错误项
     int err = dx - dy;
 
+    ST7789_BeginWrite();
+
     while(1)
     {
-        LCD_DrawPixel(x0, y0, color);
+        ST7789_DrawPixelFast(x0, y0, color);
 
         // 判断是否到达终点
         if(x0 == x1 && y0 == y1)
@@ -159,8 +176,34 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
         }
 
     }
+    ST7789_EndWrite();
 
 }
 
+void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)
+{
+    ST7789_SetAddressWindow(x, y, x + w - 1, y);
 
+    ST7789_BeginWrite();
+
+    while(w--)
+    {
+        ST7789_WriteColor(color);
+    }
+    ST7789_EndWrite();
+    
+}
+
+void LCD_DrawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color)
+{
+    ST7789_SetAddressWindow(x, y, x, y + h - 1);
+
+    ST7789_BeginWrite();
+
+    while(h--)
+    {
+        ST7789_WriteColor(color);
+    }
+    ST7789_EndWrite();
+}
 

@@ -36,14 +36,18 @@ extern SPI_Config_typedef LCD_SPI_Config;
 #define LCD_GREEN         0x07E0
 #define LCD_BLUE          0x001F
 
-/* 主要函数 */
-
 // 初始化 ST7789
 void ST7789_Init(void);
-
 // 设置地址范围
 void ST7789_SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
-
+// 开始连续写入像素
+void ST7789_BeginWrite(void);
+// 连续写一个颜色
+ void ST7789_WriteColor(uint16_t color);
+// 结束写入
+void ST7789_EndWrite(void);
+// 快速绘制像素点
+void ST7789_DrawPixelFast(uint16_t x, uint16_t y, uint16_t color);
 
 
 #endif

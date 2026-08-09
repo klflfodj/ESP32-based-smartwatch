@@ -106,4 +106,32 @@ void ST7789_SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 
 }
 
+void ST7789_BeginWrite(void)
+{
+    digitalWrite(LCD_DC, HIGH);
+
+    digitalWrite(LCD_CS, LOW);
+
+    LCD_SPI.beginTransaction(SPISettings(LCD_SPI_Config.SPI_Speed, MSBFIRST, SPI_MODE0));
+
+}
+
+void ST7789_WriteColor(uint16_t color)
+{
+    LCD_SPI.transfer(color >> 8);
+    LCD_SPI.transfer(color & 0xFF);
+}
+
+void ST7789_EndWrite(void)
+{
+    LCD_SPI.endTransaction();
+
+    digitalWrite(LCD_CS, HIGH);
+}
+
+void ST7789_DrawPixelFast(uint16_t x, uint16_t y, uint16_t color)
+{
+    ST7789_SetAddressWindow(x,y,x,y);
+    ST7789_WriteColor(color);
+}
 
