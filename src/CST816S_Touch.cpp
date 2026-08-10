@@ -24,7 +24,7 @@ bool Touch_GetXY(uint16_t *x, uint16_t *y)
     Wire.write(0x02);
     Wire.endTransmission();
 
-    Wire.requestFrom(CST816S_ADDR, (uint8_t)5);
+    Wire.requestFrom(CST816S_ADDR, 5);
     if (Wire.available() < 5)
     {
         return false;// 读取失败，没有数据返回
