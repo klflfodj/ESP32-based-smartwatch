@@ -124,23 +124,16 @@ void LCD_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color
 // -----------------------
 void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
 {
-    // 完全在屏幕外就直接返回
-    if (x0 >= LCD_WIDTH || y0 >= LCD_HEIGHT || x1 >= LCD_WIDTH || y1 >= LCD_HEIGHT)
+    // 超出右边就把宽度截短
+    if (x1 > LCD_WIDTH)
     {
-        return;
+        x1 = LCD_WIDTH ;
     }
 
-    // 超出右边就把宽度截短
     if (x0 > LCD_WIDTH)
     {
         x0 = LCD_WIDTH;
     }
-
-    if (x1 > LCD_WIDTH)
-    {
-        x1 = LCD_WIDTH;
-    }
-
 
     // 超出下边就把高度截短
     if (y0 > LCD_HEIGHT)
@@ -232,7 +225,7 @@ void LCD_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t c
 //
 // x → 起始点 X 坐标
 // y → 起始点 Y 坐标
-// w → 线的宽度
+// w → 线的长度
 // color → RGB565颜色
 // -----------------------
 void LCD_DrawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color)

@@ -2,24 +2,6 @@
 
 // -----------------------
 // 功能介绍：
-// 两个绘制缓冲区，每个约 1/10 屏幕，ESP32 内存够用
-// -----------------------
-// draw_buf_1 → 第一个绘制缓冲区
-// draw_buf_2 → 第二个绘制缓冲区
-// -----------------------
-// 注意：
-// 两个缓冲区的大小必须是 LCD_WIDTH * 28，否则会导致内存溢出
-// -----------------------
-static lv_color_t draw_buf_1[LCD_WIDTH * 28];
-static lv_color_t draw_buf_2[LCD_WIDTH * 28];
-
-static lv_disp_draw_buf_t draw_buf;
-static lv_disp_drv_t disp_drv;
-
-static lv_indev_drv_t indev_drv;
-
-// -----------------------
-// 功能介绍：
 // 刷新 LVGL 绘制的矩形区域到屏幕
 // -----------------------
 // disp_drv → 显示驱动对象
@@ -33,7 +15,7 @@ void my_disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *c
     uint16_t y1 = area->y1;
     uint16_t x2 = area->x2;
     uint16_t y2 = area->y2;
-    uint32_t pixel_count = (uint32_t)(x2 - x1 + 1) * (y2 - y1 + 1);
+    uint32_t pixel_count = (uint32_t)(x2 - x1 + 1) * (y2 - y1 + 1);// 计算要刷新的矩形区域的像素数量
 
     // 设置屏幕写入区域并开始连续写入
     ST7789_SetAddressWindow(x1, y1, x2, y2);
@@ -64,7 +46,7 @@ void lvgl_init()
     lv_init(); // 初始化 LVGL
 
     // 把两个缓冲区交给 LVGL
-    lv_disp_draw_buf_init(&draw_buf, draw_buf_1, draw_buf_2, LCD_WIDTH * 28);
+    lv_disp_draw_buf_init(&draw_buf, draw_buf_1, draw_buf_2, LCD_WIDTH * LCD_HEIGHT_T);
 
     // 注册屏幕驱动
     lv_disp_drv_init(&disp_drv);
@@ -76,6 +58,13 @@ void lvgl_init()
 
 }
 
+// -----------------------
+// 功能介绍：
+// 读取 LV屏输入数据
+// -----------------------
+// drv → LVGL 输入设备对象
+// data → LVGL 输入数据结构体
+// -----------------------
 void lv_indev_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
 {
     uint16_t x = 0;
