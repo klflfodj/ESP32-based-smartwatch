@@ -2,20 +2,18 @@
 #include "misans_font.h"
 
 // 卡片背景色
-#define CARD_BG_COLOR 0x101010
+#define CARD_BG_COLOR 0x000000
 
 // 页面对象
 static lv_obj_t *page_main;
 static lv_obj_t *page_settings;
 
-// 表盘控件，以后接 WiFi/天气代码时直接改这些
-static lv_obj_t *time_label;
-static lv_obj_t *date_year_label;
-static lv_obj_t *date_month_label;
-static lv_obj_t *date_day_label;
-static lv_obj_t *battery_label;
-static lv_obj_t *weather_label;
-static lv_obj_t *temp_label;
+// 时间显示控件
+static lv_obj_t *time_label_hour;
+static lv_obj_t *time_label_minute;
+
+// 电池显示控件
+static lv_obj_t *battery_arc;
 
 
 // 每秒更新时间
@@ -25,7 +23,12 @@ static void clock_update(lv_timer_t *timer)
     uint8_t h = (seconds / 3600) % 24;
     uint8_t m = (seconds / 60) % 60;
 
-    lv_label_set_text_fmt(time_label, "%02d:%02d", h, m);
+    h += 8;
+    m += 31;
+
+    lv_label_set_text_fmt(time_label_hour, "%02d", h);
+    lv_label_set_text_fmt(time_label_minute, "%02d", m);
+
 }
 
 // 主页面：上滑进入设置页
@@ -46,122 +49,71 @@ static void settings_swipe_cb(lv_event_t *e)
     }
 }
 
-// 装饰形状的公共样式：圆形、填色、不响应触摸
-static void set_decoration_style(lv_obj_t *obj, lv_color_t color)
-{
-    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_color(obj, color, 0);
-    lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
-    lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, 0);
-}
-
-// 云朵占位：三个圆 + 底部圆角矩形拼出云轮廓
-static void create_cloud_icon(void)
-{
-    lv_color_t cloud_color = lv_color_hex(0xD0D0D0);
-
-    lv_obj_t *c1 = lv_obj_create(page_main);
-    lv_obj_set_pos(c1, 150, 198);
-    lv_obj_set_size(c1, 10, 10);
-    set_decoration_style(c1, cloud_color);
-
-    lv_obj_t *c2 = lv_obj_create(page_main);
-    lv_obj_set_pos(c2, 157, 192);
-    lv_obj_set_size(c2, 12, 12);
-    set_decoration_style(c2, cloud_color);
-
-    lv_obj_t *c3 = lv_obj_create(page_main);
-    lv_obj_set_pos(c3, 167, 198);
-    lv_obj_set_size(c3, 10, 10);
-    set_decoration_style(c3, cloud_color);
-
-    lv_obj_t *base = lv_obj_create(page_main);
-    lv_obj_set_pos(base, 150, 200);
-    lv_obj_set_size(base, 26, 10);
-    lv_obj_clear_flag(base, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_color(base, cloud_color, 0);
-    lv_obj_set_style_bg_opa(base, LV_OPA_COVER, 0);
-    lv_obj_set_style_radius(base, 4, 0);
-}
-
-// 电池框：外框 + 电量文字 + 电池头
-static void create_battery(void)
-{
-    lv_obj_t *battery = lv_obj_create(page_main);
-    lv_obj_set_pos(battery, 112, 96);
-    lv_obj_set_size(battery, 44, 22);
-    lv_obj_clear_flag(battery, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_opa(battery, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(battery, 1, 0);
-    lv_obj_set_style_border_color(battery, lv_color_hex(0xCCCCCC), 0);
-    lv_obj_set_style_radius(battery, 3, 0);
-
-    battery_label = lv_label_create(battery);
-    lv_obj_center(battery_label);
-    lv_obj_set_style_text_font(battery_label, &lv_font_montserrat_14, 0);
-    lv_obj_set_style_text_color(battery_label, lv_color_hex(0xFFFFFF), 0);
-    lv_label_set_text(battery_label, "80%");
-
-    // 电池头：右边的小凸起
-    lv_obj_t *tip = lv_obj_create(page_main);
-    lv_obj_set_pos(tip, 157, 101);
-    lv_obj_set_size(tip, 4, 8);
-    lv_obj_clear_flag(tip, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_opa(tip, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(tip, 1, 0);
-    lv_obj_set_style_border_color(tip, lv_color_hex(0xCCCCCC), 0);
-}
-
 // 创建主页面
 static void ui_create_main_page(void)
 {
+    //-----------------------------
+    // 主页面
+    //-----------------------------
     page_main = lv_obj_create(NULL);
     lv_obj_add_flag(page_main, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_style_bg_color(page_main, lv_color_hex(CARD_BG_COLOR), 0);
 
-    // 左上大号时间
-    time_label = lv_label_create(page_main);
-    lv_obj_align(time_label, LV_ALIGN_TOP_MID, 0, 35);
-    lv_obj_set_style_text_font(time_label, &misans_time, 0);
-    lv_obj_set_style_text_color(time_label, lv_color_hex(0xFFFFFF), 0);
-    lv_label_set_text(time_label, "12:11");
+    // 时间
+    time_label_hour = lv_label_create(page_main);
+    time_label_minute = lv_label_create(page_main);
+    
+    lv_obj_align(time_label_hour, LV_ALIGN_TOP_MID, -40, 20);
+    lv_obj_align(time_label_minute, LV_ALIGN_TOP_MID, -45, 120);
+
+    lv_obj_set_style_text_font(time_label_hour, &misans_time, 0);
+    lv_obj_set_style_text_font(time_label_minute, &misans_time, 0);
+
+    lv_obj_set_style_text_color(time_label_hour, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_set_style_text_color(time_label_minute, lv_color_hex(0xFFFFFF), 0);
+
+    lv_label_set_text(time_label_hour, "00");
+    lv_label_set_text(time_label_minute, "00");
+    //-----------------------------
 
 
-    // 日期三行：中文需要以后换自定义中文字体
-    date_year_label = lv_label_create(page_main);
-    lv_obj_set_pos(date_year_label, 24, 110);
-    lv_obj_set_style_text_font(date_year_label,  &misans, 0);
-    lv_obj_set_style_text_color(date_year_label, lv_color_hex(0xE8E8E8), 0);
-    lv_label_set_text(date_year_label, "2026");
+    //-----------------------------
+    // 电池
+    battery_arc = lv_arc_create(page_main);
 
-    date_month_label = lv_label_create(page_main);
-    lv_obj_set_pos(date_month_label, 24, 140);
-    lv_obj_set_style_text_font(date_month_label, &misans, 0);
-    lv_obj_set_style_text_color(date_month_label, lv_color_hex(0xE8E8E8), 0);
-    lv_label_set_text(date_month_label, "8月");
+    lv_obj_set_size(battery_arc, 60, 60);
+    lv_obj_align(battery_arc, LV_ALIGN_TOP_RIGHT, -20, 25);
 
-    date_day_label = lv_label_create(page_main);
-    lv_obj_set_pos(date_day_label, 24, 170);
-    lv_obj_set_style_text_font(date_day_label,   &misans, 0);
-    lv_obj_set_style_text_color(date_day_label, lv_color_hex(0xE8E8E8), 0);
-    lv_label_set_text(date_day_label, "10日");// 转好中文字体后换 font_cn
+    lv_obj_remove_style(battery_arc, NULL, LV_PART_KNOB); // 去掉中间的旋钮/滑块（表盘不需要拖动）
 
-    create_battery();
+    // 设置角度范围：从 -90°（顶部）顺时针走完一圈
+    lv_arc_set_bg_angles(battery_arc, 0, 360);       // 背景弧范围
+    lv_arc_set_range(battery_arc, 0, 100);            // 值范围 0~100%
+    lv_arc_set_value(battery_arc, 85);                // 初始值 85%
 
-    // 天气文字
-    weather_label = lv_label_create(page_main);
-    lv_obj_set_pos(weather_label, 24, 200);
-    lv_obj_set_style_text_font(weather_label,    &misans, 0);
-    lv_obj_set_style_text_color(weather_label, lv_color_hex(0xE8E8E8), 0);
-    lv_label_set_text(weather_label, "天");// 转好中文字体后换 font_cn
-
-    temp_label = lv_label_create(page_main);
-    lv_obj_set_pos(temp_label, 88, 200);
-    lv_obj_set_style_text_font(temp_label,    &misans, 0);
-    lv_obj_set_style_text_color(temp_label, lv_color_hex(0xE8E8E8), 0);
-    lv_label_set_text(temp_label, "26°C");
-
-    create_cloud_icon();
+    // 背景弧样式（灰色底环）
+    static lv_style_t style_arc_bg;
+    lv_style_init(&style_arc_bg);
+    lv_style_set_arc_width(&style_arc_bg, 8);         // 弧线粗细
+    lv_style_set_arc_color(&style_arc_bg, lv_color_hex(0x333333));  // 暗灰色底
+    lv_style_set_arc_rounded(&style_arc_bg, true);    // 圆头端点
+    lv_obj_add_style(battery_arc, &style_arc_bg, LV_PART_MAIN);
+    
+    // 前景弧样式（电量指示色）
+    static lv_style_t style_arc_indicator;
+    lv_style_init(&style_arc_indicator);
+    lv_style_set_arc_width(&style_arc_indicator, 8);
+    lv_style_set_arc_color(&style_arc_indicator, lv_color_hex(0x00FF88));  // 绿色
+    lv_style_set_arc_rounded(&style_arc_indicator, true);
+    lv_obj_add_style(battery_arc, &style_arc_indicator, LV_PART_INDICATOR);
+    
+    // 可选：中间显示百分比数字
+    lv_obj_t *percent_label = lv_label_create(battery_arc);
+    lv_label_set_text_fmt(percent_label, "%d%%", 85);
+    lv_obj_set_style_text_color(percent_label, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_set_style_text_font(percent_label, &lv_font_montserrat_20, 0);  // 用小字号
+    lv_obj_center(percent_label);
+    //-----------------------------
 
     // 上滑切换设置页
     lv_obj_add_event_cb(page_main, main_swipe_cb, LV_EVENT_GESTURE, NULL);
