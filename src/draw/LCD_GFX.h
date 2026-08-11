@@ -2,7 +2,7 @@
 #define LCD_GFX_H
 
 #include <Arduino.h>
-#include "ST7789.h"
+#include "drivers/SPI/ST7789.h"
 
 
 // 填充屏幕

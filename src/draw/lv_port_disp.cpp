@@ -1,8 +1,5 @@
 #include "lv_port_disp.h"
 
-#include "ST7789.h"
-#include "CST816S_Touch.h"
-
 #define LCD_HEIGHT_T LCD_HEIGHT / 3
 
 // 一个 1/3 屏缓冲，双缓冲交替使用，内存约 33 KB

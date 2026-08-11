@@ -2,7 +2,7 @@
 #define ST7789_H
 
 #include <Arduino.h>
-#include "SPI_Driver.h"
+#include "drivers/SPI/SPI_Driver.h"
 
 // SPI 配置
 extern SPI_Config_typedef LCD_SPI_Config;

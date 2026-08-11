@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include "LCD_GFX.h"
-#include "ST7789.h"
+#include "draw/LCD_GFX.h"
+#include "drivers/SPI/ST7789.h"
 #include "lvgl.h"
-#include "lv_port_disp.h"
-#include "CST816S_Touch.h"
+#include "draw/lv_port_disp.h"
+#include "drivers/IIC/CST816s_Touch.h"
 #include "UI.h"
 
 void setup() 

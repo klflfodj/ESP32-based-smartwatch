@@ -1,9 +1,6 @@
 #include "UI.h"
 #include "misans_font.h"
 
-// 卡片背景色
-#define CARD_BG_COLOR 0x000000
-
 // 页面对象
 static lv_obj_t *page_main;
 static lv_obj_t *page_settings;
@@ -15,6 +12,14 @@ static lv_obj_t *time_label_minute;
 // 电池显示控件
 static lv_obj_t *battery_arc;
 
+// 星期显示控件
+static lv_obj_t *weekday_label;
+// 天气显示控件
+static lv_obj_t *weather_label;
+// 温度显示控件
+static lv_obj_t *temperature_label;
+
+
 
 // 每秒更新时间
 static void clock_update(lv_timer_t *timer)
@@ -23,8 +28,8 @@ static void clock_update(lv_timer_t *timer)
     uint8_t h = (seconds / 3600) % 24;
     uint8_t m = (seconds / 60) % 60;
 
-    h += 8;
-    m += 31;
+    h += 12;
+    m += 23;
 
     lv_label_set_text_fmt(time_label_hour, "%02d", h);
     lv_label_set_text_fmt(time_label_minute, "%02d", m);
@@ -57,20 +62,22 @@ static void ui_create_main_page(void)
     //-----------------------------
     page_main = lv_obj_create(NULL);
     lv_obj_add_flag(page_main, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_style_bg_color(page_main, lv_color_hex(CARD_BG_COLOR), 0);
-
+    lv_obj_set_style_bg_color(page_main, lv_color_hex(0x1B2838), 0);
+    
+    //-----------------------------
     // 时间
+    //-----------------------------
     time_label_hour = lv_label_create(page_main);
     time_label_minute = lv_label_create(page_main);
     
-    lv_obj_align(time_label_hour, LV_ALIGN_TOP_MID, -40, 20);
+    lv_obj_align(time_label_hour, LV_ALIGN_TOP_MID, -25, 20);
     lv_obj_align(time_label_minute, LV_ALIGN_TOP_MID, -45, 120);
 
     lv_obj_set_style_text_font(time_label_hour, &misans_time, 0);
     lv_obj_set_style_text_font(time_label_minute, &misans_time, 0);
 
-    lv_obj_set_style_text_color(time_label_hour, lv_color_hex(0xFFFFFF), 0);
-    lv_obj_set_style_text_color(time_label_minute, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_set_style_text_color(time_label_hour, lv_color_hex(0xBDB76B), 0);
+    lv_obj_set_style_text_color(time_label_minute, lv_color_hex(0xF0E68C), 0);
 
     lv_label_set_text(time_label_hour, "00");
     lv_label_set_text(time_label_minute, "00");
@@ -82,7 +89,7 @@ static void ui_create_main_page(void)
     battery_arc = lv_arc_create(page_main);
 
     lv_obj_set_size(battery_arc, 60, 60);
-    lv_obj_align(battery_arc, LV_ALIGN_TOP_RIGHT, -20, 25);
+    lv_obj_align(battery_arc, LV_ALIGN_TOP_RIGHT, -15, 25);
 
     lv_obj_remove_style(battery_arc, NULL, LV_PART_KNOB); // 去掉中间的旋钮/滑块（表盘不需要拖动）
 
@@ -114,6 +121,37 @@ static void ui_create_main_page(void)
     lv_obj_set_style_text_font(percent_label, &lv_font_montserrat_20, 0);  // 用小字号
     lv_obj_center(percent_label);
     //-----------------------------
+
+    //-----------------------------
+    // 星期
+    //-----------------------------
+    weekday_label = lv_label_create(page_main);
+    lv_obj_align(weekday_label, LV_ALIGN_BOTTOM_MID, -50, -25);
+    lv_obj_set_style_text_color(weekday_label, lv_color_hex(0xC19A6B), 0);
+    lv_obj_set_style_text_font(weekday_label, &misans_week, 0);
+    lv_label_set_text(weekday_label, "星期二");  // 初始文本，后面会更新
+    //-----------------------------
+
+    //-----------------------------
+    // 天气
+    //-----------------------------
+    weather_label = lv_label_create(page_main);
+    lv_obj_align(weather_label, LV_ALIGN_BOTTOM_MID, 75, -130);
+    lv_obj_set_style_text_color(weather_label, lv_color_hex(0xEEDC82), 0);
+    lv_obj_set_style_text_font(weather_label, &misans_Weather, 0);
+    lv_label_set_text(weather_label, "晴天\n  /");  // 初始文本，后面会更新
+    //----------------------------- 
+    
+    //-----------------------------
+    // 温度
+    //-----------------------------
+    temperature_label = lv_label_create(page_main);
+    lv_obj_align(temperature_label, LV_ALIGN_BOTTOM_MID, 75, -100);
+    lv_obj_set_style_text_color(temperature_label, lv_color_hex(0xEEDC82), 0);
+    lv_obj_set_style_text_font(temperature_label, &misans_nem, 0);
+    lv_label_set_text(temperature_label, "25°C");  // 初始文本，后面会更新
+    //-----------------------------
+
 
     // 上滑切换设置页
     lv_obj_add_event_cb(page_main, main_swipe_cb, LV_EVENT_GESTURE, NULL);
