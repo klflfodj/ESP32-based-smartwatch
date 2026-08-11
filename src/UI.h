@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include "lvgl.h"
+#include "rtos_task.h"
+
 
 void UI_init();
 

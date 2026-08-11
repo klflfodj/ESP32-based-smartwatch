@@ -17,21 +17,21 @@ static lv_obj_t *weekday_label;
 static lv_obj_t *weather_label;
 // 温度显示控件
 static lv_obj_t *temperature_label;
-
+// 星期中文数组
+static const char *week_cn[] = {"日", "一", "二", "三", "四", "五", "六"};
 
 
 // 每秒更新时间
 static void clock_update(lv_timer_t *timer)
 {
-    uint32_t seconds = millis() / 1000;
-    uint8_t h = (seconds / 3600) % 24;
-    uint8_t m = (seconds / 60) % 60;
+    struct tm ti;
+    xSemaphoreTake(TimeMutex, portMAX_DELAY);
+    ti = timeinfo;
+    xSemaphoreGive(TimeMutex);
 
-    h += 12;
-    m += 23;
-
-    lv_label_set_text_fmt(time_label_hour, "%02d", h);
-    lv_label_set_text_fmt(time_label_minute, "%02d", m);
+    lv_label_set_text_fmt(time_label_hour, "%02d", ti.tm_hour);
+    lv_label_set_text_fmt(time_label_minute, "%02d", ti.tm_min);
+    lv_label_set_text_fmt(weekday_label, "星期%s", week_cn[ti.tm_wday]);
 
 }
 
@@ -117,6 +117,7 @@ static void ui_create_main_page(void)
     //-----------------------------
     // 电池
     battery_arc = lv_arc_create(page_main);
+    lv_obj_clear_flag(battery_arc, LV_OBJ_FLAG_CLICKABLE);
 
     lv_obj_set_size(battery_arc, 60, 60);
     lv_obj_align(battery_arc, LV_ALIGN_TOP_RIGHT, -15, 25);
@@ -224,7 +225,7 @@ void UI_init(void)
     ui_create_info_page();
     ui_create_settings_page();
 
-    lv_timer_create(clock_update, 1000, NULL);
+    lv_timer_create(clock_update, 1000, NULL);//
 
     lv_scr_load(page_main);
 }

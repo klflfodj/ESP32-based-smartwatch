@@ -4,6 +4,8 @@
 #include "lvgl.h"
 #include "draw/lv_port_disp.h"
 #include "drivers/IIC/CST816s_Touch.h"
+#include "comms/wifi/WiFie.h"
+
 #include "UI.h"
 
 void setup() 
@@ -14,13 +16,18 @@ void setup()
   Touch_Init();
   lvgl_init();
   lv_touch_init();
+  WiFie_Init();
+  configTime(8 * 3600,0,"ntp.aliyun.com");
 
   UI_init();
+
+  /* 初始化 RTOS */
+  delay(100);
+  rtos_init();
+
 }
 
 void loop() 
 {
-  lv_tick_inc(5);     // 每 5ms 告诉 LVGL 时间过了多久
-  lv_timer_handler(); // LVGL 处理刷新和动画
-  delay(5);
+  
 }

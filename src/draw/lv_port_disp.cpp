@@ -1,13 +1,10 @@
 #include "lv_port_disp.h"
+#include <esp_heap_caps.h>
 
 #define LCD_HEIGHT_T LCD_HEIGHT / 3
 
-// 一个 1/3 屏缓冲，双缓冲交替使用，内存约 33 KB
-static lv_color_t draw_buf_1[LCD_WIDTH * LCD_HEIGHT_T];
+static lv_color_t *draw_buf_1;
 
-
-// 整屏缓冲指针，运行时用 malloc 从堆里申请
-static lv_color_t *draw_buf_full;
 
 static lv_disp_draw_buf_t draw_buf;// 绘制缓冲区，用于存储需要刷新的矩形区域
 static lv_disp_drv_t disp_drv;// 显示驱动对象，用于刷新屏幕
@@ -49,7 +46,15 @@ void lvgl_init()
 {
     lv_init(); // 初始化 LVGL
 
-    // 一个 1/4 屏缓冲，每次刷 1/4 屏，分块数从 10 块到 5 块
+    draw_buf_1 = (lv_color_t *)heap_caps_malloc
+    (LCD_WIDTH * LCD_HEIGHT_T * sizeof(lv_color_t),MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
+
+    if (draw_buf_1 == NULL) 
+    {
+        Serial.println("draw buffer alloc failed");
+        return;
+    }
+
     lv_disp_draw_buf_init(&draw_buf, draw_buf_1, NULL, LCD_WIDTH * LCD_HEIGHT_T);
 
     // 注册屏幕驱动
