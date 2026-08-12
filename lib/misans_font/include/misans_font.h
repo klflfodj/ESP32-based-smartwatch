@@ -3,7 +3,7 @@
 
 #include "lvgl.h"
 
-LV_FONT_DECLARE(misans);
+
 LV_FONT_DECLARE(misans_time);
 LV_FONT_DECLARE(misans_week);
 LV_FONT_DECLARE(misans_Weather);

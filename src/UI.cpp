@@ -1,6 +1,9 @@
 #include "UI.h"
 #include "misans_font.h"
 
+extern String WeatherType;
+extern String Temperature;
+
 // 页面对象
 static lv_obj_t *page_main;
 static lv_obj_t *page_settings;
@@ -21,18 +24,29 @@ static lv_obj_t *temperature_label;
 static const char *week_cn[] = {"日", "一", "二", "三", "四", "五", "六"};
 
 
-// 每秒更新时间
+// 每秒更新时间、星期、天气、温度
 static void clock_update(lv_timer_t *timer)
 {
-    struct tm ti;
+    struct tm time;
+    String weather;
+    String temperature;
+    // 获取时间信息
     xSemaphoreTake(TimeMutex, portMAX_DELAY);
-    ti = timeinfo;
+    time = timeinfo;
     xSemaphoreGive(TimeMutex);
+    // 获取天气信息
+    xSemaphoreTake(WeatherMutex, portMAX_DELAY);
+    weather = WeatherType;
+    // 获取温度信息
+    temperature = Temperature;
+    xSemaphoreGive(WeatherMutex);
 
-    lv_label_set_text_fmt(time_label_hour, "%02d", ti.tm_hour);
-    lv_label_set_text_fmt(time_label_minute, "%02d", ti.tm_min);
-    lv_label_set_text_fmt(weekday_label, "星期%s", week_cn[ti.tm_wday]);
+    lv_label_set_text_fmt(time_label_hour, "%02d", time.tm_hour);
+    lv_label_set_text_fmt(time_label_minute, "%02d", time.tm_min);
+    lv_label_set_text_fmt(weekday_label, "星期%s", week_cn[time.tm_wday]);
 
+    lv_label_set_text_fmt(weather_label, "%s\n  /", weather.c_str());
+    lv_label_set_text_fmt(temperature_label, "%s", temperature.c_str());
 }
 
 // 主页面：上滑进入信息页，下滑进入设置页
