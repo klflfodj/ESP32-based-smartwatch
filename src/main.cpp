@@ -16,7 +16,7 @@ void setup()
   Touch_Init();
   lvgl_init();
   lv_touch_init();
-  WiFie_Init("sideide","password");
+  WiFie_Init("我不是WIFI","c19a83y08");
   configTime(8 * 3600,0,"ntp.aliyun.com");
 
   UI_init();
