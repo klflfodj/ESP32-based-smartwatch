@@ -3,6 +3,6 @@
 
 #include <WiFi.h>
 
-void WiFie_Init(void);
+void WiFie_Init(char* ssid,char* password);
 
 #endif
