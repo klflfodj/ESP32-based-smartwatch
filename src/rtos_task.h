@@ -12,6 +12,7 @@
 
 #include "UI.h"
 #include "comms/wifi/WiFie.h"
+#include "comms/ble/ble.h"
 
 extern struct tm timeinfo;
 extern String WeatherType;
@@ -25,6 +26,7 @@ void rtos_init(void);
 void TaskClock(void *pvParameters);
 void TaskUI(void *pvParameters);
 void Taskweather(void *pvParameters);
+void TaskWifi(void *pvParameters);
 
 
 #endif

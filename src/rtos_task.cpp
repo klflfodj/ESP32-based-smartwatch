@@ -43,6 +43,7 @@ void rtos_init(void)
     xTaskCreate(TaskClock, "Clock", 1024, NULL, 4, NULL);
     xTaskCreate(TaskUI, "UI", 4096, NULL, 1, NULL);
     xTaskCreate(Taskweather, "weather", 4096, NULL, 5, NULL);
+    xTaskCreate(TaskWifi, "Wifi", 4096, NULL, 3, NULL);
 }
 
 void TaskUI(void *pvParameters)
@@ -53,6 +54,15 @@ void TaskUI(void *pvParameters)
         lv_timer_handler(); // LVGL 处理刷新和动画
         
         vTaskDelay(pdMS_TO_TICKS(5));
+    }
+}
+
+void TaskWifi(void *pvParameters)
+{
+    while (1)
+    {
+        handleWifiConfig();
+        vTaskDelay(pdMS_TO_TICKS(200));
     }
 }
 

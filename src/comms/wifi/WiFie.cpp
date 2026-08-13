@@ -8,7 +8,7 @@
 // 连接时间超过 10 秒后，打印 WiFi 连接失败信息
 // 连接成功后，打印 WiFi 连接成功信息
 // -----------------------
-void WiFie_Init(const char* ssid, const char* password)
+bool WiFie_Init(const char* ssid, const char* password)
 {
   WiFi.begin(ssid,password);
 
@@ -20,7 +20,7 @@ void WiFie_Init(const char* ssid, const char* password)
     Serial.print(".");
     timeout++;
   }
-  if(WiFi.status()==WL_CONNECTED)
+  if (WiFi.status() == WL_CONNECTED)
   {
     Serial.println();
     Serial.println("WiFi Connected");
@@ -31,5 +31,33 @@ void WiFie_Init(const char* ssid, const char* password)
     Serial.println("WiFi Connect Failed");
     WiFi.disconnect();
   }
+
+  return WiFi.status() == WL_CONNECTED;
+}
+
+Preferences wifiPrefs;
+
+void WiFie_SaveCredentials(const String& ssid, const String& password)
+{
+    wifiPrefs.begin("wifi", false);
+    wifiPrefs.putString("ssid", ssid);
+    wifiPrefs.putString("pass", password);
+    wifiPrefs.end();
+}
+
+String WiFie_GetSavedSsid()
+{
+    wifiPrefs.begin("wifi", true);
+    String ssid = wifiPrefs.getString("ssid", "");
+    wifiPrefs.end();
+    return ssid;
+}
+
+String WiFie_GetSavedPassword()
+{
+    wifiPrefs.begin("wifi", true);
+    String pass = wifiPrefs.getString("pass", "");
+    wifiPrefs.end();
+    return pass;
 }
 

@@ -19,7 +19,14 @@ void setup()
   Touch_Init();
   lvgl_init();
   lv_touch_init();
-  WiFie_Init("我不是WIFI","c19a83y08");
+  String savedSsid = WiFie_GetSavedSsid();
+  String savedPass = WiFie_GetSavedPassword();
+  if (!wifiReadyToConnect && savedSsid.length() > 0)
+  {
+    wifiSsid = savedSsid;
+    wifiPassword = savedPass;
+    wifiReadyToConnect = true;
+  }
   configTime(8 * 3600,0,"ntp.aliyun.com");
 
   UI_init();
