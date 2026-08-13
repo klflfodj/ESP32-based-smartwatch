@@ -5,12 +5,15 @@
 #include "draw/lv_port_disp.h"
 #include "drivers/IIC/CST816s_Touch.h"
 #include "comms/wifi/WiFie.h"
+#include "comms/ble/ble.h"
+
 
 #include "UI.h"
 
 void setup() 
 {
   Serial.begin(115200);
+  ble_init();
 
   ST7789_Init();
   Touch_Init();
