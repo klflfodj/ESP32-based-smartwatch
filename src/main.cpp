@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include "draw/LCD_GFX.h"
 #include "drivers/SPI/ST7789.h"
 #include "lvgl.h"
 #include "draw/lv_port_disp.h"

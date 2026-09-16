@@ -6,7 +6,6 @@ String WeatherType = "晴天";
 String Temperature = "26°C";
 
 SemaphoreHandle_t TimeMutex;
-SemaphoreHandle_t WeatherMutex;
 
 static String normalizeWeatherType(String raw)
 {
@@ -38,7 +37,6 @@ static String normalizeWeatherType(String raw)
 void rtos_init(void)
 {
     TimeMutex = xSemaphoreCreateMutex();
-    WeatherMutex = xSemaphoreCreateMutex();
 
     xTaskCreate(TaskClock, "Clock", 1024, NULL, 4, NULL);
     xTaskCreate(TaskUI, "UI", 4096, NULL, 1, NULL);
@@ -86,7 +84,7 @@ void Taskweather(void *pvParameters)
         {
             HTTPClient http;
             http.setTimeout(3000);
-            http.begin("http://t.weather.itboy.net/api/weather/city/101301101");
+            http.begin("http://t.weather.itboy.net/api/weather/city/101101101");
             int httpCode = http.GET();
 
             if (httpCode == 200)
@@ -103,16 +101,14 @@ void Taskweather(void *pvParameters)
                     int temp = (int)(doc["data"]["wendu"].as<float>() + 0.5f);  // 四舍五入
                     String newTemp = String(temp) + "°C";
                     
-                    xSemaphoreTake(WeatherMutex,portMAX_DELAY);
                     WeatherType = newType;
                     Temperature = newTemp;
-                    xSemaphoreGive(WeatherMutex);
                 }
             }
             http.end();
         }
 
-        vTaskDelay(pdMS_TO_TICKS(1800000)); // 30 分钟更新一次
+        vTaskDelay(pdMS_TO_TICKS(6000000)); // 10分钟更新一次
     }
 }
 

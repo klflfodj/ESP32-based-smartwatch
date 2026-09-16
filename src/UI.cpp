@@ -35,11 +35,9 @@ static void clock_update(lv_timer_t *timer)
     time = timeinfo;
     xSemaphoreGive(TimeMutex);
     // 获取天气信息
-    xSemaphoreTake(WeatherMutex, portMAX_DELAY);
     weather = WeatherType;
     // 获取温度信息
     temperature = Temperature;
-    xSemaphoreGive(WeatherMutex);
 
     lv_label_set_text_fmt(time_label_hour, "%02d", time.tm_hour);
     lv_label_set_text_fmt(time_label_minute, "%02d", time.tm_min);

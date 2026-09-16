@@ -1,14 +1,17 @@
 #include "ble.h"
 
 SemaphoreHandle_t wifiConfigMutex = nullptr;
-
-NimBLECharacteristic *pTxCharacteristic = nullptr;
-bool deviceConnected = false;
+NimBLECharacteristic *pTxCharacteristic = nullptr;// 发送特征值对象，用于发送数据到手机
+bool deviceConnected = false;// 是否已连接到手机
 
 String wifiSsid = "";
 String wifiPassword = "";
 volatile bool wifiReadyToConnect = false;
 
+// -----------------------
+// 功能介绍：
+// 处理手机发送的指令
+// -----------------------
 class BLECallbacks : public NimBLECharacteristicCallbacks
 {
     void onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo &connInfo) override
@@ -55,6 +58,10 @@ class BLECallbacks : public NimBLECharacteristicCallbacks
     }
 };
 
+// -----------------------
+// 功能介绍：
+// 处理手机连接和断开
+// -----------------------
 class MyServerCallbacks : public NimBLEServerCallbacks
 {
     void onConnect(NimBLEServer *server, NimBLEConnInfo &connInfo) override
@@ -71,6 +78,11 @@ class MyServerCallbacks : public NimBLEServerCallbacks
     }
 };
 
+// -----------------------
+// 功能介绍：
+// 向手机发送消息
+// -----------------------
+// message → 要发送的消息
 void sendToPhone(String message)
 {
     if (deviceConnected && pTxCharacteristic != nullptr)
@@ -121,6 +133,7 @@ void ble_init()
 
     NimBLEServer *pServer = NimBLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
+
 
     NimBLEService *pService = pServer->createService(SERVICE_UUID);
 

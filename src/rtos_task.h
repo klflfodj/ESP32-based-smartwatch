@@ -19,7 +19,6 @@ extern String WeatherType;
 extern String Temperature;
 
 extern SemaphoreHandle_t TimeMutex;
-extern SemaphoreHandle_t WeatherMutex;
 
 
 void rtos_init(void);

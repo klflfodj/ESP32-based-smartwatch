@@ -36,7 +36,12 @@ bool WiFie_Init(const char* ssid, const char* password)
 }
 
 Preferences wifiPrefs;
-
+// -----------------------
+// 功能介绍：
+// 保存 WiFi 连接凭证到偏好设置
+// -----------------------
+// ssid → 要保存的 SSID
+// password → 要保存的密码
 void WiFie_SaveCredentials(const String& ssid, const String& password)
 {
     wifiPrefs.begin("wifi", false);
@@ -44,7 +49,11 @@ void WiFie_SaveCredentials(const String& ssid, const String& password)
     wifiPrefs.putString("pass", password);
     wifiPrefs.end();
 }
-
+// -----------------------
+// 功能介绍：
+// 从偏好设置中获取保存的 SSID
+// -----------------------
+// 返回值：保存的 SSID
 String WiFie_GetSavedSsid()
 {
     wifiPrefs.begin("wifi", true);
@@ -52,7 +61,11 @@ String WiFie_GetSavedSsid()
     wifiPrefs.end();
     return ssid;
 }
-
+// -----------------------
+// 功能介绍：
+// 从偏好设置中获取保存的密码
+// -----------------------
+// 返回值：保存的密码
 String WiFie_GetSavedPassword()
 {
     wifiPrefs.begin("wifi", true);

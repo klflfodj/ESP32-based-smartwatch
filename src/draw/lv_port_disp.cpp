@@ -1,5 +1,4 @@
 #include "lv_port_disp.h"
-#include <esp_heap_caps.h>
 
 #define LCD_HEIGHT_T LCD_HEIGHT / 3
 
