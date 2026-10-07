@@ -73,6 +73,9 @@ void lvgl_init()
 // -----------------------
 void lv_indev_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
 {
+    // 抬手时 LVGL 仍然需要一组有效坐标，这里保留最后一次按下的位置
+    static uint16_t last_x = 0;
+    static uint16_t last_y = 0;
     uint16_t x = 0;
     uint16_t y = 0;
     // 读取触摸屏坐标
@@ -85,9 +88,14 @@ void lv_indev_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
         // 触摸 X 轴也和屏幕方向相反，翻转 X 坐标
         x = LCD_WIDTH - 1 - x;
 
+        // 噪声数据可能导致坐标越界，钳位到屏幕范围内，避免指针被甩到屏幕外
+        if (x > LCD_WIDTH - 1) x = LCD_WIDTH - 1;
+        if (y > LCD_HEIGHT - 1) y = LCD_HEIGHT - 1;
+
+        last_x = x;
+        last_y = y;
+
         // 触摸屏有触摸点
-        data->point.x = x;
-        data->point.y = y;
         data->state = LV_INDEV_STATE_PRESSED;
     }
     else
@@ -96,6 +104,8 @@ void lv_indev_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
         data->state = LV_INDEV_STATE_RELEASED;
     }
 
+    data->point.x = last_x;
+    data->point.y = last_y;
 }
 
 // -----------------------
@@ -109,6 +119,9 @@ void lv_touch_init(void)
     lv_indev_drv_init(&indev_drv);// 初始化输入设备驱动
     indev_drv.type = LV_INDEV_TYPE_POINTER;// 触摸类型
     indev_drv.read_cb = lv_indev_read;// 读取回调函数
+    // 默认要滑动 50 像素才算手势，调小后轻扫也能识别，翻页更灵敏
+    indev_drv.gesture_limit = 30;
+    indev_drv.gesture_min_velocity = 2;
     lv_indev_drv_register(&indev_drv);// 注册输入设备驱动
 }
 

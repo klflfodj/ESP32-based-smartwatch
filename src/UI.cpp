@@ -27,24 +27,57 @@ static const char *week_cn[] = {"日", "一", "二", "三", "四", "五", "六"}
 // 每秒更新时间、星期、天气、温度
 static void clock_update(lv_timer_t *timer)
 {
+    // 记录上一次显示的内容：内容没变就不调用 lv_label_set_text_fmt
+    // lv_label_set_text_fmt 每次都会释放并重建字符串、并无条件重画整块区域，
+    // 原来每秒对 5 个控件（含大字号中文）都刷一遍，界面会周期性卡顿
+    static int last_hour = -1;
+    static int last_minute = -1;
+    static int last_wday = -1;
+    static String last_weather;
+    static String last_temperature;
+
     struct tm time;
-    String weather;
-    String temperature;
-    // 获取时间信息
-    xSemaphoreTake(TimeMutex, portMAX_DELAY);
+    // 用短超时拿锁：拿不到就直接跳过这次刷新。
+    // 这是跑在 lv_timer_handler() 里的回调，一旦阻塞，刷新和触摸都会停住
+    if (xSemaphoreTake(TimeMutex, pdMS_TO_TICKS(20)) != pdTRUE)
+    {
+        return;
+    }
     time = timeinfo;
     xSemaphoreGive(TimeMutex);
-    // 获取天气信息
-    weather = WeatherType;
-    // 获取温度信息
-    temperature = Temperature;
+    // 获取天气信息（用引用，避免每秒复制 String）
+    const String &weather = WeatherType;
+    const String &temperature = Temperature;
 
-    lv_label_set_text_fmt(time_label_hour, "%02d", time.tm_hour);
-    lv_label_set_text_fmt(time_label_minute, "%02d", time.tm_min);
-    lv_label_set_text_fmt(weekday_label, "星期%s", week_cn[time.tm_wday]);
+    if (time.tm_hour != last_hour)
+    {
+        lv_label_set_text_fmt(time_label_hour, "%02d", time.tm_hour);
+        last_hour = time.tm_hour;
+    }
 
-    lv_label_set_text_fmt(weather_label, "%s\n  /", weather.c_str());
-    lv_label_set_text_fmt(temperature_label, "%s", temperature.c_str());
+    if (time.tm_min != last_minute)
+    {
+        lv_label_set_text_fmt(time_label_minute, "%02d", time.tm_min);
+        last_minute = time.tm_min;
+    }
+
+    if (time.tm_wday != last_wday)
+    {
+        lv_label_set_text_fmt(weekday_label, "星期%s", week_cn[time.tm_wday]);
+        last_wday = time.tm_wday;
+    }
+
+    if (weather != last_weather)
+    {
+        lv_label_set_text_fmt(weather_label, "%s\n  /", weather.c_str());
+        last_weather = weather;
+    }
+
+    if (temperature != last_temperature)
+    {
+        lv_label_set_text_fmt(temperature_label, "%s", temperature.c_str());
+        last_temperature = temperature;
+    }
 }
 
 // 主页面：上滑进入信息页，下滑进入设置页
@@ -121,8 +154,8 @@ static void ui_create_main_page(void)
     lv_obj_set_style_text_color(time_label_hour, lv_color_hex(0xFFFFFF), 0);
     lv_obj_set_style_text_color(time_label_minute, lv_color_hex(0xF0E68C), 0);
 
-    lv_label_set_text(time_label_hour, "00");
-    lv_label_set_text(time_label_minute, "00");
+    lv_label_set_text(time_label_hour, "11");
+    lv_label_set_text(time_label_minute, "32");
     //-----------------------------
 
 

@@ -8,7 +8,9 @@
 extern SPI_Config_typedef LCD_SPI_Config;
 
 /*SPI 时钟频率 */
-#define LCD_SPI_SPEED     40000000
+/* 40MHz -> 80MHz：整屏刷新的 SPI 传输时间减半，翻页和滑动明显更跟手
+   如果换线后出现花屏/闪烁，把它改回 40000000 */
+#define LCD_SPI_SPEED     80000000
 
 /* 数据缓冲区像素上限设置 */
 #define LCD_BUFFER_PIXELS 512

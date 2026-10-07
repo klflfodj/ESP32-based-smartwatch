@@ -8,7 +8,7 @@ SPIClass LCD_SPI(VSPI);// 初始化 SPI 通信
 // 功能介绍：
 // 初始化 SPI 通信
 // -----------------------
-void SPI_Init(SPI_Config_typedef *config, SPIClass &SPI_Class)
+void SPI_Init(SPI_Config_typedef *config)
 {
     pinMode(config->CS_Pin, OUTPUT);
     pinMode(config->DC_Pin, OUTPUT);
@@ -18,7 +18,7 @@ void SPI_Init(SPI_Config_typedef *config, SPIClass &SPI_Class)
     digitalWrite(config->DC_Pin, HIGH);
     digitalWrite(config->RST_Pin, HIGH);
 
-    SPI_Class.begin(config->SCK_Pin, -1, config->MOSI_Pin, config->CS_Pin);
+    LCD_SPI.begin(config->SCK_Pin, -1, config->MOSI_Pin, config->CS_Pin);
 
 }
 

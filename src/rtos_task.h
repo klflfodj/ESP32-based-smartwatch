@@ -11,8 +11,8 @@
 #include "esp_task_wdt.h"
 
 #include "UI.h"
-#include "comms/wifi/WiFie.h"
-#include "comms/ble/ble.h"
+//#include "comms/wifi/WiFie.h"
+//#include "comms/ble/ble.h"
 
 extern struct tm timeinfo;
 extern String WeatherType;
